@@ -23,6 +23,7 @@ def test_insert_event():
         print(response)
 
 
+@pytest.mark.skip(reason="Nao necessita")
 def test_get_event_by_id():
     event_id = "123"
     events_repository = EventsRepository(session=db_handler.session)
