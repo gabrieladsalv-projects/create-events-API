@@ -2,25 +2,33 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 class DBConnectionHandler:
-    def __init__(self) -> None:
-        self.__connection_string = "sqlite:///storage.db"  # Corrigindo a formatação da string de conexão
+    def __init__(self):
+        self.__connection_string = "sqlite:///storage.db"
         self.__engine = None
         self.session = None
         
-    def connect_to_db(self) -> None:
+    def connect_to_db(self):
         self.__engine = create_engine(self.__connection_string)
         
     def get_engine(self):
         return self.__engine
     
+    def get_session(self):
+        if self.session is None:
+            Session = sessionmaker(bind=self.__engine)
+            self.session = Session()
+        return self.session
+    
+    def close_session(self):
+        if self.session is not None:
+            self.session.close()
+            self.session = None
+    
     def __enter__(self):
-        session_maker = sessionmaker(bind=self.__engine)  # Vinculando o sessionmaker ao engine
-        self.session = session_maker()
+        self.connect_to_db()
         return self
     
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.session.close()
+        self.close_session()
 
-
-with DBConnectionHandler() as db_handler:
-    db_handler.connect_to_db()
+db_handler = DBConnectionHandler()
