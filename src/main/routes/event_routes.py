@@ -23,7 +23,7 @@ def get_event(event_id):
     http_request = HttpRequest(param={'event_id': event_id})
     event_handler = EventHandler()
 
-    http_response = event_handler.get(http_request)
+    http_response = event_handler.find_by_id(http_request)
     try:
         return jsonify(http_response.body), http_response.status_code
     except Exception:

@@ -22,6 +22,6 @@ class __DBConnectionHandler:
         return self
     
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close_session()
+        self.session.close()
 
 db_connection_handler = __DBConnectionHandler()
