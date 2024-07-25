@@ -1,4 +1,4 @@
-from src.models.settings.connection import db_handler
+from src.models.settings.connection import db_connection_handler
 from src.models.entities.events import Events
 from typing import Dict
 from sqlalchemy.orm import Session
@@ -11,7 +11,7 @@ class EventsRepository:
         self.session = session
 
     def insert_event(self, eventsInfo: Dict) -> Dict:
-        with db_handler as database:
+        with db_connection_handler as database:
             try:
                 event = Events(
                     id=eventsInfo.get("uuid"),
@@ -32,14 +32,12 @@ class EventsRepository:
                 raise exception
         
     
-    def get_event(self, event_id: str) -> Events:
-        with db_handler as database:
+    def get_event_by_id(self, event_id: str) -> Events:
+        with db_connection_handler as database:
             try:
-                event = (
-                    database.session.query(Events)
-                    .filter(Events.id == event_id).one()
-                )
-                return event
-            
+            event = (
+                database.session.query(Events).filter(Events.id == event_id).one()
+            )
+            return event
             except NoResultFound:
-                raise Exception("Event not found")
+                return None

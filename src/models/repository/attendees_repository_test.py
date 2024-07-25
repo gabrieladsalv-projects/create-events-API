@@ -1,12 +1,12 @@
 import pytest
 from src.models.repository.attendees_repository import AttendeesRepository
-from src.models.settings.connection import db_handler
+from src.models.settings.connection import db_connection_handler
 
 @pytest.fixture(scope="module")
 def setup_database():
-    db_handler.connect_to_db()
+    db_connection_handler.connect_to_db()
     yield
-    db_handler.close_session()
+    db_connection_handler.close_session()
 
 @pytest.mark.usefixtures("setup_database")
 def test_insert_attendee():
