@@ -46,9 +46,8 @@ Ensure the database settings are correctly configured in src/models/settings/con
 
 Run the application:
 
-    ```bash
     python3 app.py
-    ```
+
 
 5. **Test the API Endpoints:**
 
