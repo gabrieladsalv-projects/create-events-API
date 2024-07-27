@@ -5,6 +5,8 @@ from src.models.repository.attendees_repository import AttendeesRepository
 from src.models.repository.events_repository import EventsRepository
 from src.http_types.http_request import HttpRequest
 from src.http_types.http_response import HttpResponse
+from src.errors.error_types.http_not_found import HttpNotFoundError
+from src.errors.error_types.http_conflict import HttpConflictError
 
 class AttendeesHandler:
     def __init__(self) -> None:
@@ -21,7 +23,7 @@ class AttendeesHandler:
             event_attendees_count["attendeesAmount"] 
         and event_attendees_count["maximum_attendees"] < event_attendees_count["attendeesAmount"]
         ):
-            raise Exception("Event is full")
+            raise HttpConflictError("Event is full")
         
         body["uuid"] = str(uuid.uuid4())
         body["event_id"] = event_id
@@ -33,7 +35,7 @@ class AttendeesHandler:
     def find_attendee_badge(self, http_request: HttpRequest) -> HttpResponse:
         attendee_id = http_request.param["attendee_id"]
         badge = self.__attendees_repository.get_attendee_badge_by_id(attendee_id)
-        if not badge: raise Exception("Attendee not found")
+        if not badge: raise HttpNotFoundError("Attendee not found")
         return HttpResponse(body={
             "badge": {
                 "name": badge.name,
@@ -48,7 +50,7 @@ class AttendeesHandler:
     def find_attendees_from_event(self, http_request: HttpRequest) -> HttpResponse:
         event_id = http_request.param["event_id"]
         attendees = self.__attendees_repository.get_attendees_by_event_id(event_id)
-        if not attendees: raise Exception("No attendees found")
+        if not attendees: raise HttpNotFoundError("No attendees found")
         
         formatted_attendees = []
         

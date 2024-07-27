@@ -2,6 +2,7 @@ from src.models.settings.connection import db_connection_handler
 from src.models.entities.attendees import Attendees
 from src.models.entities.events import Events
 from src.models.entities.check_ins import CheckIns
+from src.errors.error_types.http_conflict import HttpConflictError
 from typing import Dict, List
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
@@ -20,7 +21,7 @@ class AttendeesRepository:
 
             return attendee_info
         except IntegrityError:
-            raise Exception("Attendee already registered")
+            raise HttpConflictError("Attendee already registered")
         except Exception as exception:
             db_connection_handler.get_session().rollback()
             raise exception

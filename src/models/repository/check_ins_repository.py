@@ -1,5 +1,6 @@
 from src.models.settings.connection import db_connection_handler
 from src.models.entities.check_ins import CheckIns
+from src.errors.error_types.http_conflict import HttpConflictError
 from sqlalchemy.exc import IntegrityError
 class CheckInRepository:
     def insert_check_in(self, attendee_id: str) -> str:
@@ -11,7 +12,7 @@ class CheckInRepository:
                 return attendee_id
             
             except IntegrityError:
-                raise Exception("Attendee already checked in")
+                raise HttpConflictError("Attendee already checked in")
             
             except Exception as exception:
                 database.session.rollback()
