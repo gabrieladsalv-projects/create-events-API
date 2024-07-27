@@ -1,7 +1,8 @@
 from src.models.settings.connection import db_connection_handler
 from src.models.entities.attendees import Attendees
 from src.models.entities.events import Events
-from typing import Dict
+from src.models.entities.check_ins import CheckIns
+from typing import Dict, List
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -37,3 +38,24 @@ class AttendeesRepository:
             return attendee
         except Exception as exception:
             raise exception
+
+
+
+    def get_attendees_by_event_id(self,eventId: str) -> List[Attendees]:
+        with db_connection_handler as database:
+            attendees = {
+                database.session
+                .query(Attendees)
+                .outerjoin(CheckIns, CheckIns.attendee_id == Attendees.id)
+                .filter(Attendees.event_id == eventId)
+                .with_entities(
+                    Attendees.id,
+                    Attendees.name,
+                    Attendees.email,
+                    CheckIns.created_at.label('check_in_at'),
+                    Attendees.created_at.label('registered_at')
+                )
+                .all()
+            }
+            return attendees
+            
